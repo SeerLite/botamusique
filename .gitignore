@@ -120,3 +120,6 @@ templates/*.html
 
 # Pycharm
 .idea/
+
+ffmpeg/
+ffmpeg.7z
