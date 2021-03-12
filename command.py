@@ -62,11 +62,11 @@ def register_all_commands(bot):
     bot.register_command(commands('volume'), cmd_volume)
     bot.register_command(commands('yt_play'), cmd_yt_play)
     bot.register_command(commands('yt_search'), cmd_yt_search)
+    bot.register_command(commands('kill'), cmd_kill)
 
     # admin command
     bot.register_command(commands('add_webinterface_user'), cmd_web_user_add, admin=True)
     bot.register_command(commands('drop_database'), cmd_drop_database, no_partial_match=True, admin=True)
-    bot.register_command(commands('kill'), cmd_kill, admin=True)
     bot.register_command(commands('list_webinterface_user'), cmd_web_user_list, admin=True)
     bot.register_command(commands('remove_webinterface_user'), cmd_web_user_remove, admin=True)
     bot.register_command(commands('update'), cmd_update, no_partial_match=True, admin=True)
