@@ -164,6 +164,9 @@ class MumbleBot:
             self.mumble.callbacks.set_callback(pymumble.constants.PYMUMBLE_CLBK_USERREMOVED, user_change_callback)
             self.mumble.callbacks.set_callback(pymumble.constants.PYMUMBLE_CLBK_USERUPDATED, user_change_callback)
 
+        self.timeout_cancelled = threading.Event()
+        self.timeout_cancelled.set()
+
         # Debug use
         self._loop_status = 'Idle'
         self._display_rms = False
@@ -204,6 +207,12 @@ class MumbleBot:
         self.nb_exit += 1
 
         self.exit = True
+
+    def leave_on_timeout(self):
+        if not self.timeout_cancelled.wait(timeout=120):
+            self.log.info("Leaving because of empty channel timeout")
+            self.pause()
+            self.exit = True
 
     def get_version(self):
         if self.version != "git":
@@ -356,6 +365,8 @@ class MumbleBot:
             elif var.config.get("bot", "when_nobody_in_channel") == "pause" and len(var.playlist) != 0:
                 self.send_channel_msg(tr("auto_paused"))
 
+            self.timeout_cancelled.set()
+
         elif len(own_channel.get_users()) == 1:
             # if the bot is the only user left in the channel
             self.log.info('bot: Other users in the channel left. Stopping music now.')
@@ -364,6 +375,11 @@ class MumbleBot:
                 self.clear()
             else:
                 self.pause()
+
+            if self.timeout_cancelled.is_set():
+                self.timeout_cancelled.clear()
+                threading.Thread(target=self.leave_on_timeout, daemon=True).start()
+                self.log.info("Timer started. Leaving in 120 seconds")
 
     # =======================
     #   Launch and Download
