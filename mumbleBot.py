@@ -363,7 +363,7 @@ class MumbleBot:
         if len(own_channel.get_users()) == 2:
             if var.config.get("bot", "when_nobody_in_channel") == "pause_resume":
                 self.resume()
-            elif var.config.get("bot", "when_nobody_in_channel") == "pause" and len(var.playlist) != 0:
+            elif var.config.get("bot", "when_nobody_in_channel") == "pause" and self.is_pause:
                 self.send_channel_msg(tr("auto_paused"))
 
             self.timeout_cancelled.set()
